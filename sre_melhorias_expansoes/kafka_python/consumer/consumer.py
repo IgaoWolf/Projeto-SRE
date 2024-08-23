@@ -23,6 +23,7 @@ def consume_messages(consumer):
         raise
 
 if __name__ == "__main__":
-    consumer = create_consumer(['localhost:9095'], 'teste-topic')  # Usando Nginx como ponto de acesso
+    # Usando o IP do HAProxy
+    consumer = create_consumer(['172.18.0.6:9095'], 'teste-topic')
     consume_messages(consumer)
 

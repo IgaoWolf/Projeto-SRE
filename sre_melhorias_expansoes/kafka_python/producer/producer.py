@@ -17,7 +17,7 @@ def send_message(producer, topic, message):
         producer.send(topic, message)
         producer.flush()
         logging.info(f"Message sent: {message}")
-    except Exception as e:
+    except KafkaError as e:
         logging.error(f"Error sending message: {e}")
         raise
 
@@ -34,7 +34,8 @@ def send_message_with_retries(producer, topic, message, retries=5, delay=2):
     logging.error("Max retries reached. Message failed to send.")
 
 if __name__ == "__main__":
-    producer = create_producer(['localhost:9095'])  # Usando Nginx como ponto de acesso
+    # Usando o IP do HAProxy
+    producer = create_producer(['172.18.0.6:9095'])
     for i in range(10):
         send_message_with_retries(producer, 'teste-topic', {'key': f'message-{i}', 'value': i})
         time.sleep(1)
