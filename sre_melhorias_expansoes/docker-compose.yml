@@ -28,7 +28,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_PROCESS_ROLES: ""
       KAFKA_JMX_PORT: 9999
     ports:
       - "9092:9092"
@@ -51,7 +50,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_PROCESS_ROLES: ""
       KAFKA_JMX_PORT: 9998
     ports:
       - "9093:9093"
@@ -74,13 +72,24 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_PROCESS_ROLES: ""
       KAFKA_JMX_PORT: 9997
     ports:
       - "9094:9094"
       - "9997:9997"
     volumes:
       - kafka3_data:/kafka
+
+  haproxy:
+    image: haproxy:latest
+    container_name: kafka-haproxy
+    ports:
+      - "9095:9095"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
 
 volumes:
   zookeeper_data:

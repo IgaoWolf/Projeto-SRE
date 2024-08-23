@@ -23,6 +23,6 @@ def consume_messages(consumer):
         raise
 
 if __name__ == "__main__":
-    consumer = create_consumer(['kafka1:9092'], 'teste-topic')
+    consumer = create_consumer(['localhost:9095'], 'teste-topic')  # Usando Nginx como ponto de acesso
     consume_messages(consumer)
 

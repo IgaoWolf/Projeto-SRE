@@ -2,6 +2,7 @@ from kafka import KafkaProducer
 import json
 import time
 import logging
+from kafka.errors import KafkaError
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,7 +34,7 @@ def send_message_with_retries(producer, topic, message, retries=5, delay=2):
     logging.error("Max retries reached. Message failed to send.")
 
 if __name__ == "__main__":
-    producer = create_producer(['kafka1:9092'])
+    producer = create_producer(['localhost:9095'])  # Usando Nginx como ponto de acesso
     for i in range(10):
         send_message_with_retries(producer, 'teste-topic', {'key': f'message-{i}', 'value': i})
         time.sleep(1)
