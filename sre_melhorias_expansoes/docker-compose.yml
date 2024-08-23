@@ -79,13 +79,13 @@ services:
     volumes:
       - kafka3_data:/kafka
 
-  haproxy:
-    image: haproxy:latest
-    container_name: kafka-haproxy
+  nginx:
+    image: nginx:latest
+    container_name: kafka-nginx
     ports:
-      - "9095:9095"
+      - "9095:80"
     volumes:
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - kafka1
       - kafka2

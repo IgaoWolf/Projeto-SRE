@@ -1,42 +1,43 @@
 from kafka import KafkaProducer
 import json
-import time
 import logging
-from kafka.errors import KafkaError
+import time
 
-logging.basicConfig(level=logging.INFO)
+class KafkaProducerWrapper:
+    def __init__(self, bootstrap_servers, topic):
+        self.producer = KafkaProducer(
+            bootstrap_servers=bootstrap_servers,
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+        )
+        self.topic = topic
 
-def create_producer(bootstrap_servers):
-    return KafkaProducer(
-        bootstrap_servers=bootstrap_servers,
-        value_serializer=lambda v: json.dumps(v).encode('utf-8')
-    )
+    def send_message(self, message, retries=3, retry_delay=5):
+        attempts = 0
+        while attempts < retries:
+            try:
+                self.producer.send(self.topic, value=message)
+                self.producer.flush()
+                logging.info(f"Message sent: {message}")
+                break
+            except Exception as e:
+                attempts += 1
+                logging.error(f"Failed to send message, attempt {attempts}/{retries}: {e}")
+                if attempts < retries:
+                    time.sleep(retry_delay)
+                else:
+                    logging.error(f"Max retries reached. Failed to send message: {message}")
 
-def send_message(producer, topic, message):
-    try:
-        producer.send(topic, message)
-        producer.flush()
-        logging.info(f"Message sent: {message}")
-    except KafkaError as e:
-        logging.error(f"Error sending message: {e}")
-        raise
-
-def send_message_with_retries(producer, topic, message, retries=5, delay=2):
-    attempt = 0
-    while attempt < retries:
-        try:
-            send_message(producer, topic, message)
-            return
-        except KafkaError as e:
-            logging.error(f"Retry {attempt + 1}/{retries}: Failed to send message. Error: {e}")
-            attempt += 1
-            time.sleep(delay)
-    logging.error("Max retries reached. Message failed to send.")
+    def close(self):
+        logging.info("Closing producer connection.")
+        self.producer.close()
 
 if __name__ == "__main__":
-    # Usando o IP do HAProxy
-    producer = create_producer(['172.18.0.6:9095'])
-    for i in range(10):
-        send_message_with_retries(producer, 'teste-topic', {'key': f'message-{i}', 'value': i})
-        time.sleep(1)
+    logging.basicConfig(level=logging.INFO)
+    producer = KafkaProducerWrapper(bootstrap_servers='localhost:9092', topic='test_topic')
+
+    # Mensagem de exemplo para envio
+    message = {"key": "value", "message": "Hello, Kafka!"}
+    
+    producer.send_message(message)
+    producer.close()
 
