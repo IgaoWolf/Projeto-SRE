@@ -31,3 +31,14 @@ Exportador do Kafka: Utilize o Kafka Exporter para coletar métricas do Kafka e 
 Configuração do Prometheus: Crie um arquivo de configuração do Prometheus que defina os targets para o Kafka e outros serviços.
 
 Dashboards do Grafana: Crie dashboards no Grafana para visualizar métricas como latência, throughput e taxa de erro do Kafka. Utilize gráficos e alertas para monitorar a saúde do sistema.
+
+Utilizações - 
+https://github.com/danielqsj/kafka_exporter
+https://hub.docker.com/_/zookeeper
+https://hub.docker.com/r/prom/prometheus
+https://hub.docker.com/r/grafana/grafana
+https://hub.docker.com/_/nginx
+
+Referente a utilização da imagem direto da apache - se dá por 
+ The kafka configuration file appears to be for a legacy cluster. Formatting is only supported for clusters in KRaft mode.
+https://hub.docker.com/r/confluentinc/cp-kafka
