@@ -82,10 +82,9 @@ services:
   kafka-exporter:
     image: danielqsj/kafka-exporter:latest
     container_name: kafka_exporter
+    command: ["--kafka.server=kafka1:9092", "--kafka.server=kafka2:9093", "--kafka.server=kafka3:9094"]
     ports:
       - "9308:9308"
-    environment:
-      KAFKA_SERVER: kafka1:9092,kafka2:9093,kafka3:9094
     depends_on:
       - kafka1
       - kafka2
